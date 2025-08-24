@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TrebleNotes — Notes. Practice. Progress.</title>
+    <meta
+      name="description"
+      content="TrebleNotes — teacher-first note-taking & practice app for music teachers and students. Join the beta."
+    />
+    <style>
+      :root {
+        --bg: #071226;
+        --panel: #0b1722;
+        --muted: #9aa4ad;
+        --accent: #7dd3fc;
+        --glass: rgba(255, 255, 255, 0.03);
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(180deg, #061024 0%, #081226 100%);
+        color: #e6eef6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+      }
+      .wrap {
+        width: 100%;
+        max-width: 980px;
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 28px;
+        align-items: start;
+      }
+      .card {
+        background: var(--glass);
+        padding: 26px;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 4.5vw, 40px);
+        letter-spacing: -0.02em;
+      }
+      p.lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+      }
+      .features {
+        margin-top: 18px;
+        display: grid;
+        gap: 10px;
+      }
+      .feat {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        margin-top: 6px;
+        flex: 0 0 10px;
+      }
+      aside h3 {
+        margin: 0 0 8px;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      input[type="email"],
+      input[type="text"] {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.02);
+        color: inherit;
+        font-size: 15px;
+      }
+      button {
+        padding: 12px;
+        border-radius: 8px;
+        border: 0;
+        background: linear-gradient(90deg, #06b6d4, #60a5fa);
+        color: #04202b;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      footer {
+        grid-column: 1/-1;
+        margin-top: 16px;
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+      }
+      .note {
+        margin-top: 12px;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 10px;
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      @media (max-width: 880px) {
+        .wrap {
+          grid-template-columns: 1fr;
+          gap: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap" role="main">
+      <section class="card" aria-labelledby="brand">
+        <h1 id="brand">TrebleNotes</h1>
+        <p class="lead">
+          Notes. Practice. Progress. Teacher-first note-taking & practice app
+          for music teachers and students.
+        </p>
+
+        <div class="features" aria-hidden>
+          <div class="feat">
+            <div class="dot"></div>
+            <div>
+              <strong>Teacher-first workflows</strong>
+              <div class="muted">Fast lesson notes and reusable templates.</div>
+            </div>
+          </div>
+          <div class="feat">
+            <div class="dot"></div>
+            <div>
+              <strong>Practice tracking</strong>
+              <div class="muted">
+                Send practice plans & track student progress.
+              </div>
+            </div>
+          </div>
+          <div class="feat">
+            <div class="dot"></div>
+            <div>
+              <strong>Offline-capable</strong>
+              <div class="muted">Works where your students practice.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="note" id="status-note" aria-live="polite">
+          <strong>Note:</strong> Emails go to
+          <code>treblenotes.app@gmail.com</code>. Visitors without a webmail
+          client will still be able to join via the fallback instructions shown
+          after they click <em>Join waitlist</em>.
+        </div>
+      </section>
+
+      <aside class="card" aria-labelledby="join">
+        <h3 id="join">Join the Beta</h3>
+        <p class="muted" style="margin: 0 0 12px">
+          Get early access, teacher pricing, and a chance to shape the app.
+        </p>
+
+        <!-- This form uses a mailto fallback so submissions go to treblenotes.app@gmail.com.
+           NOTE: mailto opens the visitor's email client. For automatic delivery (no user email client),
+           later we can wire Formspree / Netlify Forms / a serverless function. -->
+
+        <form id="waitlist" onsubmit="return handleSubmit(event)">
+          <label class="muted" for="name">Name</label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            placeholder="Your name"
+            required
+          />
+
+          <label class="muted" for="email">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="you@school.edu"
+            required
+          />
+
+          <label class="muted" for="role">I am a</label>
+          <input
+            id="role"
+            name="role"
+            type="text"
+            placeholder="Music teacher / Student / Studio owner"
+          />
+
+          <button type="submit">Join waitlist</button>
+
+          <div id="after" style="display: none; margin-top: 10px">
+            <div class="muted" id="after-msg"></div>
+          </div>
+        </form>
+
+        <div class="note" style="margin-top: 14px">
+          Want submissions collected automatically (no user email app)?<br />
+          Options: <strong>Formspree</strong> (simple endpoint),
+          <strong>Netlify Forms</strong> (if you deploy there), or a tiny
+          serverless endpoint that forwards to Gmail. I can set any of those up
+          when you're ready.
+        </div>
+
+        <div
+          style="
+            margin-top: 10px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+          "
+        >
+          <div>
+            Follow:
+            <a
+              href="https://instagram.com/treblenotesapp"
+              style="color: var(--accent)"
+              >@treblenotesapp</a
+            >
+          </div>
+          <div style="margin-top: 8px">
+            Contact:
+            <a
+              href="mailto:treblenotes.app@gmail.com"
+              style="color: var(--accent)"
+              >treblenotes.app@gmail.com</a
+            >
+          </div>
+        </div>
+      </aside>
+
+      <footer>
+        © <span id="yr"></span> TrebleNotes — Built by a working music teacher.
+        <span class="muted">v0.2</span>
+      </footer>
+    </main>
+
+    <script>
+      document.getElementById("yr").textContent = new Date().getFullYear();
+
+      function handleSubmit(e) {
+        e.preventDefault();
+        const name = encodeURIComponent(
+          document.getElementById("name").value.trim()
+        );
+        const email = encodeURIComponent(
+          document.getElementById("email").value.trim()
+        );
+        const role = encodeURIComponent(
+          document.getElementById("role").value.trim()
+        );
+        const subject = encodeURIComponent("TrebleNotes Beta Signup");
+        const body = encodeURIComponent(
+          "Name: " +
+            (decodeURIComponent(name) || "") +
+            "\n" +
+            "Email: " +
+            (decodeURIComponent(email) || "") +
+            "\n" +
+            "Role: " +
+            (decodeURIComponent(role) || "") +
+            "\n\n" +
+            "Source: treblenotes.app landing page"
+        );
+
+        // Primary behavior: open user's mail client with pre-filled email to treblenotes.app@gmail.com
+        const mailto = `mailto:treblenotes.app@gmail.com?subject=${subject}&body=${body}`;
+
+        // Try to open mail client
+        window.location.href = mailto;
+
+        // Show a helpful message in case the user's browser blocks mailto or they have no email client
+        const after = document.getElementById("after");
+        const afterMsg = document.getElementById("after-msg");
+        after.style.display = "block";
+        afterMsg.textContent =
+          "If your mail app didn't open, please copy this address and email us: treblenotes.app@gmail.com — include your name and role. We'll add you manually.";
+        return false;
+      }
+    </script>
+  </body>
+</html>
