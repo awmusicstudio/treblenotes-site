@@ -191,11 +191,13 @@
           Get early access, teacher pricing, and a chance to shape the app.
         </p>
 
-        <!-- This form uses a mailto fallback so submissions go to treblenotes.app@gmail.com.
-           NOTE: mailto opens the visitor's email client. For automatic delivery (no user email client),
-           later we can wire Formspree / Netlify Forms / a serverless function. -->
-
-        <form id="waitlist" onsubmit="return handleSubmit(event)">
+        <!-- Formspree: submissions posted to your Formspree endpoint (AJAX). -->
+        <form
+          id="waitlist"
+          action="https://formspree.io/f/xzzapddy"
+          method="POST"
+          novalidate
+        >
           <label class="muted" for="name">Name</label>
           <input
             id="name"
@@ -222,6 +224,14 @@
             placeholder="Music teacher / Student / Studio owner"
           />
 
+          <!-- optional extra fields for Formspree -->
+          <input
+            type="hidden"
+            name="_subject"
+            value="TrebleNotes Beta Signup"
+          />
+          <input type="hidden" name="_language" value="en" />
+
           <button type="submit">Join waitlist</button>
 
           <div id="after" style="display: none; margin-top: 10px">
@@ -230,11 +240,7 @@
         </form>
 
         <div class="note" style="margin-top: 14px">
-          Want submissions collected automatically (no user email app)?<br />
-          Options: <strong>Formspree</strong> (simple endpoint),
-          <strong>Netlify Forms</strong> (if you deploy there), or a tiny
-          serverless endpoint that forwards to Gmail. I can set any of those up
-          when you're ready.
+          Submissions go straight to our inbox — no user email client required.
         </div>
 
         <div
@@ -273,45 +279,57 @@
     <script>
       document.getElementById("yr").textContent = new Date().getFullYear();
 
-      function handleSubmit(e) {
-        e.preventDefault();
-        const name = encodeURIComponent(
-          document.getElementById("name").value.trim()
-        );
-        const email = encodeURIComponent(
-          document.getElementById("email").value.trim()
-        );
-        const role = encodeURIComponent(
-          document.getElementById("role").value.trim()
-        );
-        const subject = encodeURIComponent("TrebleNotes Beta Signup");
-        const body = encodeURIComponent(
-          "Name: " +
-            (decodeURIComponent(name) || "") +
-            "\n" +
-            "Email: " +
-            (decodeURIComponent(email) || "") +
-            "\n" +
-            "Role: " +
-            (decodeURIComponent(role) || "") +
-            "\n\n" +
-            "Source: treblenotes.app landing page"
-        );
-
-        // Primary behavior: open user's mail client with pre-filled email to treblenotes.app@gmail.com
-        const mailto = `mailto:treblenotes.app@gmail.com?subject=${subject}&body=${body}`;
-
-        // Try to open mail client
-        window.location.href = mailto;
-
-        // Show a helpful message in case the user's browser blocks mailto or they have no email client
+      // AJAX submit to Formspree so visitors stay on-page and see a confirmation
+      // endpoint: https://formspree.io/f/xzzapddy
+      (function () {
+        const form = document.getElementById("waitlist");
         const after = document.getElementById("after");
         const afterMsg = document.getElementById("after-msg");
-        after.style.display = "block";
-        afterMsg.textContent =
-          "If your mail app didn't open, please copy this address and email us: treblenotes.app@gmail.com — include your name and role. We'll add you manually.";
-        return false;
-      }
+
+        form.addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          // basic client-side validation
+          const email = document.getElementById("email").value.trim();
+          const name = document.getElementById("name").value.trim();
+          if (!email || !name) {
+            after.style.display = "block";
+            afterMsg.textContent = "Please enter your name and email address.";
+            return;
+          }
+
+          // collect form data
+          const data = new FormData(form);
+
+          try {
+            const resp = await fetch(form.action, {
+              method: "POST",
+              body: data,
+              headers: {
+                Accept: "application/json",
+              },
+            });
+
+            if (resp.ok) {
+              form.reset();
+              after.style.display = "block";
+              afterMsg.textContent =
+                "Thanks — you're on the beta list! We'll email you with access details.";
+            } else {
+              const text = await resp.text();
+              after.style.display = "block";
+              afterMsg.textContent =
+                "Submission failed. If this persists, email treblenotes.app@gmail.com";
+              console.error("Formspree error:", resp.status, text);
+            }
+          } catch (err) {
+            after.style.display = "block";
+            afterMsg.textContent =
+              "Network error. Please try again or email treblenotes.app@gmail.com";
+            console.error(err);
+          }
+        });
+      })();
     </script>
   </body>
 </html>
